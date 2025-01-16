@@ -8,9 +8,10 @@ namespace CQRSTemplate.Infrastructure.Persistance
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options):base(options)
         {
-            Database.Migrate();  
+            //Database.Migrate();  
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Bot> Bots { get; set; }
     }
 }

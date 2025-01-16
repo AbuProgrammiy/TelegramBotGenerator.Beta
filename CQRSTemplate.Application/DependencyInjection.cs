@@ -1,4 +1,5 @@
-﻿using CQRSTemplate.Application.Services.AuthServices;
+﻿using CQRSTemplate.Application.BackgroundServices;
+using CQRSTemplate.Application.Services.AuthServices;
 using CQRSTemplate.Application.Services.EmailServices;
 using CQRSTemplate.Application.Services.PasswordServices;
 using MediatR;
@@ -11,6 +12,7 @@ namespace CQRSTemplate.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            services.AddHostedService<MainBackgroundService>();
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IEmailService, EmailService>();
