@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Telegram.Bot;
+using TgUser = Telegram.Bot.Types.User;
 
 namespace CQRSTemplate.Application.BackgroundServices
 {
@@ -19,11 +20,11 @@ namespace CQRSTemplate.Application.BackgroundServices
             _configuration = configuration;
             _serviceScopeFactory = serviceScopeFactory;
 
-            using var scope = _serviceScopeFactory.CreateScope();
+            IServiceScope scope = _serviceScopeFactory.CreateScope();
             _applicationDbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
 
-            InitializeMainBot();
-            InitializeOtherBots();
+            InitializeMainBot().GetAwaiter().GetResult();
+            InitializeOtherBots().GetAwaiter().GetResult();
         }
 
         
@@ -32,9 +33,6 @@ namespace CQRSTemplate.Application.BackgroundServices
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                InitializeOtherBots();
-
-
                 var me = await _mainBotClient.GetMe();
                 Console.WriteLine($"Main Bot {me.Username} is running.");
 

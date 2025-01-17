@@ -1,29 +1,50 @@
-﻿using Telegram.Bot.Polling;
-using Telegram.Bot.Types.Enums;
+﻿using CQRSTemplate.Application.Abstractions;
+using CQRSTemplate.Domain.Entities.Models.PrimaryModels;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using CQRSTemplate.Application.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
-using CQRSTemplate.Domain.Entities.Models.PrimaryModels;
+using Telegram.Bot.Types.Enums;
+using TgUser = Telegram.Bot.Types.User;
 
 namespace CQRSTemplate.Application.BackgroundServices
 {
     public partial class MainBackgroundService
     {
-        private void InitializeOtherBots()
+        private async Task InitializeOtherBots()
         {
-            List<Bot> bots = _applicationDbContext.Bots.ToList();
-            _botClients = new List<TelegramBotClient>(); 
+            IServiceScope scope = _serviceScopeFactory.CreateScope();
+            IApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
+
+            List<Bot> bots = await dbContext.Bots.ToListAsync();
 
             foreach (var bot in bots)
             {
                 TelegramBotClient botClient = new TelegramBotClient(bot.Token);
 
-                ReceiverOptions receiverOptions = new ReceiverOptions { AllowedUpdates = Array.Empty<UpdateType>() };
-                botClient.StartReceiving(HandleBotUpdateAsync, HandlePollingErrorAsync, receiverOptions);
+                botClient.StartReceiving(HandleBotUpdateAsync, HandlePollingErrorAsync);
 
                 _botClients.Add(botClient);
             }
+        }
+
+        private async Task InitializeAnotherBot(string token)
+        {
+            IServiceScope scope = _serviceScopeFactory.CreateScope();
+            IApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
+
+            TelegramBotClient botClient = new TelegramBotClient(token);
+            TgUser bot = await botClient.GetMe();
+            botClient.StartReceiving(HandleBotUpdateAsync, HandlePollingErrorAsync);
+            _botClients.Add(botClient);
+
+            await dbContext.Bots.AddAsync(new Bot
+            {
+                Token = token,
+                Username = bot.Username
+            });
+
+            await dbContext.SaveChangesAsync(new CancellationToken());
         }
 
         private async Task HandleBotUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)

@@ -28,7 +28,6 @@ namespace CQRSTemplate.Application.Services.AuthServices
                 new Claim(JwtRegisteredClaimNames.Iat,EpochTime.GetIntDate(DateTime.UtcNow).ToString(CultureInfo.InvariantCulture),ClaimValueTypes.Integer64),
 
                 new Claim("Id",user.Id.ToString()),
-                new Claim("Name",user.Name)
             };
 
             JwtSecurityToken token = new JwtSecurityToken(
