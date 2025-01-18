@@ -7,6 +7,7 @@ namespace CQRSTemplate.Application.Abstractions
     {
         DbSet<User> Users { get; set; }
         DbSet<Bot> Bots { get; set; }
+        public DbSet<Vocabulary> Vocabularies { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

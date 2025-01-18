@@ -3,6 +3,7 @@ using System;
 using CQRSTemplate.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CQRSTemplate.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250118051715_aading-bot-botId")]
+    partial class aadingbotbotId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,7 +92,7 @@ namespace CQRSTemplate.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("BotId")
+                    b.Property<Guid?>("BotId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Question")
@@ -116,13 +119,9 @@ namespace CQRSTemplate.Infrastructure.Migrations
 
             modelBuilder.Entity("CQRSTemplate.Domain.Entities.Models.PrimaryModels.Vocabulary", b =>
                 {
-                    b.HasOne("CQRSTemplate.Domain.Entities.Models.PrimaryModels.Bot", "Bot")
+                    b.HasOne("CQRSTemplate.Domain.Entities.Models.PrimaryModels.Bot", null)
                         .WithMany("Vocabulary")
-                        .HasForeignKey("BotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Bot");
+                        .HasForeignKey("BotId");
                 });
 
             modelBuilder.Entity("CQRSTemplate.Domain.Entities.Models.PrimaryModels.Bot", b =>

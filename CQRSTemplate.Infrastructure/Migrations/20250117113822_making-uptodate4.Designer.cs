@@ -3,6 +3,7 @@ using System;
 using CQRSTemplate.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CQRSTemplate.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250117113822_making-uptodate4")]
+    partial class makinguptodate4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,9 +30,6 @@ namespace CQRSTemplate.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<long>("BotId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -79,30 +79,6 @@ namespace CQRSTemplate.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CQRSTemplate.Domain.Entities.Models.PrimaryModels.Vocabulary", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("BotId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BotId");
-
-                    b.ToTable("Vocabularies");
-                });
-
             modelBuilder.Entity("CQRSTemplate.Domain.Entities.Models.PrimaryModels.Bot", b =>
                 {
                     b.HasOne("CQRSTemplate.Domain.Entities.Models.PrimaryModels.User", "User")
@@ -112,22 +88,6 @@ namespace CQRSTemplate.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CQRSTemplate.Domain.Entities.Models.PrimaryModels.Vocabulary", b =>
-                {
-                    b.HasOne("CQRSTemplate.Domain.Entities.Models.PrimaryModels.Bot", "Bot")
-                        .WithMany("Vocabulary")
-                        .HasForeignKey("BotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Bot");
-                });
-
-            modelBuilder.Entity("CQRSTemplate.Domain.Entities.Models.PrimaryModels.Bot", b =>
-                {
-                    b.Navigation("Vocabulary");
                 });
 #pragma warning restore 612, 618
         }

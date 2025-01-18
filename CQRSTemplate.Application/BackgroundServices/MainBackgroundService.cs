@@ -48,6 +48,8 @@ namespace CQRSTemplate.Application.BackgroundServices
 
         private Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
+            botClient.Close();
+            _botClients.RemoveAll(b => b.BotId == botClient.BotId);
             Console.WriteLine($"Polling error: {exception.Message}");
             return Task.CompletedTask;
         }
